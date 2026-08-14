@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca · Librería Itinerante Grupo México</title>
+<link rel="icon" type="image/png" href="grupomexicologo1.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- CARGANDO -->
+<div id="pantalla-cargando" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--crema)">
+  <img src="grupomexicologo1.png" alt="Cargando" style="width:70px;height:70px;object-fit:contain;opacity:.85">
+  <p style="color:var(--gris-medio);font-size:14px">Conectando con la base de datos…</p>
+</div>
+
+<!-- LOGIN -->
+<div id="pantalla-login" class="pantalla">
+  <div class="login-lateral">
+    <div class="login-logo">
+      <img src="grupomexicologo.png" class="login-logo-img" alt="Grupo México">
+      <h1>Biblioteca</h1>
+      <p>Librería Itinerante<br>Centro Comunitario</p>
+      <p class="subtitulo">Grupo México · Unidad Santa Bárbara</p>
+    </div>
+  </div>
+  <div class="login-form-contenedor">
+    <div class="login-form-caja">
+      <h2>Bienvenido</h2>
+      <p class="subtexto">Ingresa con tu CURP y contraseña para acceder.</p>
+      <div class="campo">
+        <label>CURP</label>
+        <input type="text" id="login-curp" placeholder="XXXX000000XXXXXXX0" maxlength="18" style="text-transform:uppercase">
+      </div>
+      <div class="campo">
+        <label>Contraseña</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primario" style="width:100%;justify-content:center;margin-top:8px" onclick="hacerLogin()">Iniciar sesión</button>
+      <div class="login-links">
+        <button class="login-link" onclick="mostrarPantalla('registro')">Registrarme</button>
+        <button class="login-link" onclick="abrirLoginAdmin()">Panel administrativo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGISTRO -->
+<div id="pantalla-registro" class="pantalla">
+  <div class="registro-caja">
+    <div class="registro-header">
+      <img src="grupomexicologo1.png" style="width:56px;height:56px;object-fit:contain;margin-bottom:10px" alt="Logo">
+      <h1>Crear cuenta</h1>
+      <p>Llena el formulario para registrarte en la biblioteca</p>
+    </div>
+    <div class="campo-row">
+      <div class="campo"><label>Nombre(s)</label><input type="text" id="reg-nombre" placeholder="Kevin Daniel"></div>
+      <div class="campo"><label>Apellidos</label><input type="text" id="reg-apellidos" placeholder="Ledesma Villanueva"></div>
+    </div>
+    <div class="campo"><label>CURP</label><input type="text" id="reg-curp" placeholder="18 caracteres" maxlength="18" style="text-transform:uppercase"></div>
+    <div class="campo"><label>Teléfono (opcional)</label><input type="tel" id="reg-telefono" placeholder="614 000 0000"></div>
+    <div class="campo"><label>Contraseña</label><input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres"></div>
+    <div class="campo"><label>Confirmar contraseña</label><input type="password" id="reg-pass2" placeholder="Repite tu contraseña"></div>
+    <div class="campo">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;cursor:pointer">
+        <input type="checkbox" id="reg-menor" style="width:auto;accent-color:var(--rojo)">
+        Este registro es para un menor de edad
+      </label>
+    </div>
+    <button class="btn btn-primario" style="width:100%;justify-content:center" onclick="hacerRegistro()">Crear cuenta</button>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="mostrarPantalla('login')">← Volver al inicio</button>
+  </div>
+</div>
+
+<!-- USUARIO -->
+<div id="pantalla-usuario" class="pantalla">
+  <header class="app-header">
+    <div class="app-header-logo">
+      <img src="grupomexicologo1.png" alt="Grupo México"> Biblioteca
+    </div>
+    <nav class="app-header-nav">
+      <button class="nav-btn activo" onclick="cambiarTab('catalogo')">Catálogo</button>
+      <button class="nav-btn" onclick="cambiarTab('prestamos')">Mis préstamos</button>
+      <button class="nav-btn" onclick="cambiarTab('historial')">Historial</button>
+    </nav>
+    <div class="app-header-usuario">
+      <div class="avatar" id="avatar-usuario">K</div>
+      <span class="usuario-nombre" id="nombre-usuario">Usuario</span>
+      <button class="btn btn-secundario btn-sm" onclick="cerrarSesion()">Salir</button>
+    </div>
+  </header>
+  <main class="app-content">
+    <div class="tab-panel activo" id="tab-catalogo">
+      <div class="catalogo-header">
+        <div>
+          <h2 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:4px">Catálogo</h2>
+          <p style="color:var(--gris-medio);font-size:14px">Explora los libros disponibles</p>
+        </div>
+        <div class="catalogo-busqueda">
+          <span class="busqueda-icono">🔍</span>
+          <input type="text" id="busqueda-catalogo" placeholder="Buscar título, autor..." oninput="filtrarCatalogo()">
+        </div>
+      </div>
+      <div class="genero-filtros" id="genero-filtros" style="margin-bottom:20px"></div>
+      <div class="libros-grid" id="libros-grid"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-prestamos">
+      <h2 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:4px">Mis préstamos activos</h2>
+      <p style="color:var(--gris-medio);font-size:14px;margin-bottom:24px">Libros que tienes actualmente en préstamo</p>
+      <div id="lista-mis-prestamos"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-historial">
+      <h2 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:4px">Historial</h2>
+      <p style="color:var(--gris-medio);font-size:14px;margin-bottom:24px">Todos tus préstamos registrados</p>
+      <div class="historial-tabla">
+        <table>
+          <thead><tr><th>Libro</th><th>Autor</th><th>Fecha préstamo</th><th>Fecha límite</th><th>Devolución</th><th>Estado</th></tr></thead>
+          <tbody id="historial-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADMIN -->
+<div id="pantalla-admin" class="pantalla">
+  <header class="admin-header">
+    <div class="admin-logo">
+      <img src="grupomexicologo1.png" alt="Logo"> Biblioteca <span class="badge-admin">ADMIN</span>
+    </div>
+    <nav class="admin-nav">
+      <button class="admin-nav-btn activo" onclick="cambiarTabAdmin('dashboard')">Dashboard</button>
+      <button class="admin-nav-btn" onclick="cambiarTabAdmin('prestamos-admin')">Préstamos</button>
+      <button class="admin-nav-btn" onclick="cambiarTabAdmin('revision')">Libros a Revisión</button>
+      <button class="admin-nav-btn" onclick="cambiarTabAdmin('inventario')">Inventario</button>
+      <button class="admin-nav-btn" onclick="cambiarTabAdmin('usuarios-admin')">Usuarios</button>
+      <button class="admin-nav-btn" onclick="cambiarTabAdmin('config')">Configuración</button>
+    </nav>
+    <button class="btn btn-secundario btn-sm" style="border-color:rgba(255,255,255,.2);color:#fff;background:rgba(255,255,255,.1)" onclick="cerrarSesionAdmin()">Salir</button>
+  </header>
+  <main class="admin-content">
+    <!-- DASHBOARD -->
+    <div class="tab-panel activo" id="tab-dashboard">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:24px">Dashboard</h2>
+      <div class="stats-grid" id="stats-grid"></div>
+      <div class="admin-tabla-caja">
+        <div class="admin-tabla-header"><h3>Préstamos recientes</h3></div>
+        <table class="admin-tabla">
+          <thead><tr><th>Usuario</th><th>Libro</th><th>Fecha préstamo</th><th>Fecha límite</th><th>Estado</th></tr></thead>
+          <tbody id="tabla-recientes"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRÉSTAMOS ADMIN -->
+    <div class="tab-panel" id="tab-prestamos-admin">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h2 style="font-family:'Playfair Display',serif;font-size:26px">Gestión de préstamos</h2>
+        <select id="filtro-estado-prestamo" onchange="renderTablaPrestamoAdmin()" style="padding:8px 12px;border:1.5px solid var(--gris-claro);border-radius:var(--radio-sm);font-family:'DM Sans',sans-serif;font-size:14px">
+          <option value="">Todos los estados</option>
+          <option value="activo">Activos</option>
+          <option value="devuelto">Devueltos</option>
+          <option value="vencido">Vencidos</option>
+        </select>
+      </div>
+      <div class="admin-tabla-caja">
+        <table class="admin-tabla">
+          <thead><tr><th>Usuario</th><th>Libro</th><th>Préstamo</th><th>Límite</th><th>Devolución</th><th>Estado</th><th>Acción</th></tr></thead>
+          <tbody id="tabla-prestamos-admin"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- LIBROS A REVISIÓN -->
+    <div class="tab-panel" id="tab-revision">
+      <div style="margin-bottom:8px">
+        <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:4px">Libros a Revisión</h2>
+        <p style="color:var(--gris-medio);font-size:14px">Libros devueltos que requieren revisión antes de reintegrarse al catálogo</p>
+      </div>
+      <div style="background:#FEF9EC;border:1.5px solid #F0C27F;border-radius:var(--radio);padding:14px 20px;margin-bottom:24px;font-size:14px;color:#7D5A00;display:flex;align-items:center;gap:10px">
+        <span style="font-size:20px">⚠️</span>
+        <span>Revisa físicamente cada libro y presiona <strong>"Revisado"</strong> para que vuelva a estar disponible en el catálogo de usuarios.</span>
+      </div>
+      <div id="lista-revision"></div>
+    </div>
+
+    <!-- INVENTARIO -->
+    <div class="tab-panel" id="tab-inventario">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+        <h2 style="font-family:'Playfair Display',serif;font-size:26px">Inventario de libros</h2>
+        <button class="btn btn-primario" onclick="abrirModalAgregarLibro()">+ Agregar libro</button>
+      </div>
+      <div class="admin-tabla-caja">
+        <div class="admin-tabla-header">
+          <div class="busqueda-admin"><input type="text" id="busqueda-inv" placeholder="Buscar..." oninput="renderInventario()"></div>
+        </div>
+        <table class="admin-tabla">
+          <thead><tr><th>Código</th><th>Título</th><th>Autor</th><th>Género</th><th>Año</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tabla-inventario"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- USUARIOS -->
+    <div class="tab-panel" id="tab-usuarios-admin">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:24px">Usuarios registrados</h2>
+      <div class="admin-tabla-caja">
+        <div class="admin-tabla-header">
+          <div class="busqueda-admin"><input type="text" id="busqueda-usr" placeholder="Buscar..." oninput="renderUsuariosAdmin()"></div>
+        </div>
+        <table class="admin-tabla">
+          <thead><tr><th>Nombre</th><th>CURP</th><th>Teléfono</th><th>Registro</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody id="tabla-usuarios-admin"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CONFIGURACIÓN -->
+    <div class="tab-panel" id="tab-config">
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:24px">Configuración</h2>
+      <div style="background:var(--blanco);border-radius:var(--radio);border:1.5px solid var(--gris-claro);padding:32px;max-width:440px">
+        <h3 style="font-family:'Playfair Display',serif;font-size:18px;margin-bottom:20px">Cambiar contraseña de administrador</h3>
+        <div class="campo"><label>Contraseña actual</label><input type="password" id="cfg-pass-actual"></div>
+        <div class="campo"><label>Nueva contraseña</label><input type="password" id="cfg-pass-nueva"></div>
+        <div class="campo"><label>Confirmar nueva contraseña</label><input type="password" id="cfg-pass-conf"></div>
+        <button class="btn btn-primario" onclick="cambiarPasswordAdmin()">Guardar cambios</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALES -->
+<div class="modal-overlay" id="modal-login-admin">
+  <div class="modal">
+    <h2>🔐 Acceso administrativo</h2>
+    <div class="campo"><label>Usuario</label><input type="text" id="adm-user" placeholder="admin"></div>
+    <div class="campo"><label>Contraseña</label><input type="password" id="adm-pass" placeholder="••••••••"></div>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-login-admin')">Cancelar</button>
+      <button class="btn btn-primario" onclick="hacerLoginAdmin()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-prestamo">
+  <div class="modal">
+    <h2>📖 Solicitar préstamo</h2>
+    <div id="modal-prestamo-libro-info" style="background:var(--crema-2);border-radius:var(--radio-sm);padding:14px;margin-bottom:16px"></div>
+    <p class="seleccion-titulo">¿Cuántos días necesitas el libro?</p>
+    <div class="dias-selector">
+      <div class="dia-btn seleccionado" onclick="seleccionarDias(7,this)"><span>7</span><small>días</small></div>
+      <div class="dia-btn" onclick="seleccionarDias(14,this)"><span>14</span><small>días</small></div>
+      <div class="dia-btn" onclick="seleccionarDias(21,this)"><span>21</span><small>días</small></div>
+    </div>
+    <div class="prestamo-resumen" id="prestamo-resumen"></div>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-prestamo')">Cancelar</button>
+      <button class="btn btn-primario" onclick="confirmarPrestamo()">Confirmar préstamo</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal aviso devolución -->
+<div class="modal-overlay" id="modal-aviso-devolucion">
+  <div class="modal" style="text-align:center;max-width:420px">
+    <div style="font-size:56px;margin-bottom:16px">📚</div>
+    <h2 style="margin-bottom:12px">¡Devolución registrada!</h2>
+    <p style="font-size:15px;line-height:1.7;color:var(--gris);margin-bottom:8px">
+      Por favor, coloca el libro en el <strong style="color:var(--negro)">estante de libros devueltos</strong>
+      para que el encargado pueda revisarlo y acomodarlo en su lugar.
+    </p>
+    <p style="font-size:13px;color:var(--gris-medio)">
+      El libro estará disponible de nuevo una vez que el encargado confirme su revisión.
+    </p>
+    <div class="modal-btns" style="justify-content:center;margin-top:28px">
+      <button class="btn btn-primario" style="min-width:140px;justify-content:center" onclick="cerrarModal('modal-aviso-devolucion')">OK, entendido</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-agregar-libro">
+  <div class="modal" style="max-width:540px">
+    <h2>📚 Agregar libro</h2>
+    <div class="campo-row">
+      <div class="campo"><label>Código (Auto-generado)</label><input type="text" id="nl-codigo" placeholder="LIB-009" readonly style="background:var(--crema-2)"></div>
+      <div class="campo">
+        <label>Género</label>
+        <select id="nl-genero">
+          <option>Novela</option><option>Clásico</option><option>Infantil</option>
+          <option>Fantasía</option><option>Misterio</option><option>Educativo</option>
+          <option>Historia</option><option>Ciencia ficción</option><option>Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="campo"><label>Título</label><input type="text" id="nl-titulo" placeholder="Nombre del libro"></div>
+    <div class="campo"><label>Autor</label><input type="text" id="nl-autor" placeholder="Nombre del autor"></div>
+    <div class="campo-row">
+      <div class="campo"><label>Editorial</label><input type="text" id="nl-editorial"></div>
+      <div class="campo"><label>Año</label><input type="text" id="nl-anio" placeholder="2024" maxlength="4"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-agregar-libro')">Cancelar</button>
+      <button class="btn btn-primario" onclick="guardarNuevoLibro()">Agregar libro</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR LIBRO -->
+<div class="modal-overlay" id="modal-editar-libro">
+  <div class="modal" style="max-width:540px">
+    <h2>✏️ Editar libro</h2>
+    <div class="campo-row">
+      <div class="campo"><label>Código</label><input type="text" id="el-codigo" placeholder="LIB-009"></div>
+      <div class="campo">
+        <label>Género</label>
+        <select id="el-genero">
+          <option>Novela</option><option>Clásico</option><option>Infantil</option>
+          <option>Fantasía</option><option>Misterio</option><option>Educativo</option>
+          <option>Historia</option><option>Ciencia ficción</option><option>Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="campo"><label>Título</label><input type="text" id="el-titulo" placeholder="Nombre del libro"></div>
+    <div class="campo"><label>Autor</label><input type="text" id="el-autor" placeholder="Nombre del autor"></div>
+    <div class="campo-row">
+      <div class="campo"><label>Editorial</label><input type="text" id="el-editorial"></div>
+      <div class="campo"><label>Año</label><input type="text" id="el-anio" placeholder="2024" maxlength="4"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-editar-libro')">Cancelar</button>
+      <button class="btn btn-primario" onclick="guardarEdicionLibro()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADVERTENCIA CÓDIGO DUPLICADO -->
+<div class="modal-overlay" id="modal-codigo-duplicado">
+  <div class="modal" style="max-width:480px">
+    <h2>⚠️ Código duplicado</h2>
+    <p style="color:var(--gris-medio);margin-bottom:20px">El código <strong id="cod-dup-valor"></strong> ya existe en el inventario.</p>
+    <div style="background:var(--amarillo-claro);border-left:4px solid var(--amarillo);padding:12px;border-radius:4px;margin-bottom:20px;font-size:14px">
+      <strong>Sugerencia:</strong> Usa el código <strong id="cod-sugerido"></strong>
+    </div>
+    <p style="color:var(--gris-medio);font-size:14px;margin-bottom:20px">¿Deseas usar el código sugerido o prefieres elegir otro diferente?</p>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-codigo-duplicado')">Elegir otro código</button>
+      <button class="btn btn-primario" onclick="usarCodigoSugerido()">Usar sugerido</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR ELIMINAR LIBRO -->
+<div class="modal-overlay" id="modal-confirmar-eliminar-libro">
+  <div class="modal" style="max-width:480px">
+    <h2>🗑️ Confirmar eliminación</h2>
+    <p style="color:var(--gris-medio);margin-bottom:20px">¿Estás seguro de que deseas eliminar el libro?</p>
+    <div style="background:var(--rojo-claro);border-left:4px solid var(--rojo);padding:12px;border-radius:4px;margin-bottom:20px;font-size:14px">
+      <strong>Libro:</strong> <span id="libro-eliminar-nombre"></span>
+    </div>
+    <p style="color:var(--gris-medio);font-size:14px;margin-bottom:20px">Esta acción no se puede deshacer.</p>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-confirmar-eliminar-libro')">Cancelar</button>
+      <button class="btn btn-primario" style="background:var(--rojo);border-color:var(--rojo)" onclick="confirmarEliminarLibro()">Eliminar libro</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR USUARIO -->
+<div class="modal-overlay" id="modal-editar-usuario">
+  <div class="modal" style="max-width:540px">
+    <h2>✏️ Editar usuario</h2>
+    <div class="campo-row">
+      <div class="campo"><label>Nombre(s)</label><input type="text" id="eu-nombre" placeholder="Nombre del usuario"></div>
+      <div class="campo"><label>Apellidos</label><input type="text" id="eu-apellidos" placeholder="Apellidos"></div>
+    </div>
+    <div class="campo"><label>CURP</label><input type="text" id="eu-curp" placeholder="18 caracteres" maxlength="18" style="text-transform:uppercase"></div>
+    <div class="campo"><label>Teléfono</label><input type="tel" id="eu-telefono" placeholder="614 000 0000"></div>
+    <div class="campo"><label>Nueva contraseña (dejar en blanco para no cambiar)</label><input type="password" id="eu-password" placeholder="Mínimo 6 caracteres"></div>
+    <div class="campo">
+      <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-size:14px;cursor:pointer">
+        <input type="checkbox" id="eu-menor" style="width:auto;accent-color:var(--rojo)">
+        Este usuario es menor de edad
+      </label>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-secundario" onclick="cerrarModal('modal-editar-usuario')">Cancelar</button>
+      <button class="btn btn-primario" onclick="guardarEdicionUsuario()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<div id="comprobante-print">
+  <div class="comp-header" style="background:#C0392B;color:#fff;padding:24px">
+    <h1 style="font-family:'Playfair Display',serif;font-size:22px"><img src="grupomexicologo.png" style="width:24px;height:24px;vertical-align:middle;margin-right:8px"> Biblioteca — Comprobante de Préstamo</h1>
+    <p style="font-size:13px;opacity:.85">Librería Itinerante · Grupo México, Unidad Santa Bárbara</p>
+  </div>
+  <div class="comp-body" style="padding:24px"><div id="comp-contenido"></div></div>
+</div>
+
+
+<!-- Firebase (SDK compat, no requiere empaquetador) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+<!-- Configuración y datos de tu proyecto -->
+<script src="firebase-config.js"></script>
+<script src="seed-data.js"></script>
+
+<!-- Lógica de la aplicación -->
+<script src="app.js"></script>
+</body>
+</html>
