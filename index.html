@@ -40,7 +40,7 @@
         <label>Contraseña</label>
         <div class="campo-pass">
           <input type="password" id="login-pass" placeholder="••••••••" autocomplete="new-password">
-          <button type="button" class="toggle-pass" data-target="login-pass" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('login-pass', this)">👁️</button>
+          <button type="button" class="toggle-pass" data-target="login-pass" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('login-pass', this)"><i data-ico="ojo"></i></button>
         </div>
       </div>
       <button class="btn btn-primario" style="width:100%;justify-content:center;margin-top:8px" onclick="hacerLogin()">Iniciar sesión</button>
@@ -70,14 +70,14 @@
       <label>Contraseña</label>
       <div class="campo-pass">
         <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-        <button type="button" class="toggle-pass" data-target="reg-pass" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('reg-pass', this)">👁️</button>
+        <button type="button" class="toggle-pass" data-target="reg-pass" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('reg-pass', this)"><i data-ico="ojo"></i></button>
       </div>
     </div>
     <div class="campo">
       <label>Confirmar contraseña</label>
       <div class="campo-pass">
         <input type="password" id="reg-pass2" placeholder="Repite tu contraseña" autocomplete="new-password">
-        <button type="button" class="toggle-pass" data-target="reg-pass2" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('reg-pass2', this)">👁️</button>
+        <button type="button" class="toggle-pass" data-target="reg-pass2" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('reg-pass2', this)"><i data-ico="ojo"></i></button>
       </div>
     </div>
     <div class="campo">
@@ -87,7 +87,7 @@
       </label>
     </div>
     <button class="btn btn-primario" style="width:100%;justify-content:center" onclick="hacerRegistro()">Crear cuenta</button>
-    <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="mostrarPantalla('login')">← Volver al inicio</button>
+    <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:8px" onclick="mostrarPantalla('login')"><i data-ico="flecha-izq"></i> Volver al inicio</button>
   </div>
 </div>
 
@@ -116,7 +116,7 @@
           <p style="color:var(--gris-medio);font-size:14px">Explora los libros disponibles</p>
         </div>
         <div class="catalogo-busqueda">
-          <span class="busqueda-icono">🔍</span>
+          <span class="busqueda-icono"><i data-ico="buscar"></i></span>
           <input type="text" id="busqueda-catalogo" placeholder="Buscar título, autor..." oninput="filtrarCatalogo()">
         </div>
       </div>
@@ -199,7 +199,7 @@
         <p style="color:var(--gris-medio);font-size:14px">Libros devueltos que requieren revisión antes de reintegrarse al catálogo</p>
       </div>
       <div style="background:#FEF9EC;border:1.5px solid #F0C27F;border-radius:var(--radio);padding:14px 20px;margin-bottom:24px;font-size:14px;color:#7D5A00;display:flex;align-items:center;gap:10px">
-        <span style="font-size:20px">⚠️</span>
+        <span class="aviso-ico"><i data-ico="alerta"></i></span>
         <span>Revisa físicamente cada libro y presiona <strong>"Revisado"</strong> para que vuelva a estar disponible en el catálogo de usuarios.</span>
       </div>
       <div id="lista-revision"></div>
@@ -210,7 +210,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
         <h2 style="font-family:'Playfair Display',serif;font-size:26px">Inventario de libros</h2>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-secundario" onclick="abrirGestorGeneros()">🏷️ Géneros</button>
+          <button class="btn btn-secundario" onclick="abrirGestorGeneros()"><i data-ico="etiqueta"></i> Géneros</button>
           <button class="btn btn-primario" onclick="abrirModalAgregarLibro()">+ Agregar libro</button>
         </div>
       </div>
@@ -247,19 +247,19 @@
         <div class="campo"><label>Contraseña actual</label>
           <div class="campo-pass">
             <input type="password" id="cfg-pass-actual" autocomplete="new-password">
-            <button type="button" class="toggle-pass" data-target="cfg-pass-actual" title="Mostrar contraseña" onclick="toggleVerPassword('cfg-pass-actual', this)">👁️</button>
+            <button type="button" class="toggle-pass" data-target="cfg-pass-actual" title="Mostrar contraseña" onclick="toggleVerPassword('cfg-pass-actual', this)"><i data-ico="ojo"></i></button>
           </div>
         </div>
         <div class="campo"><label>Nueva contraseña</label>
           <div class="campo-pass">
             <input type="password" id="cfg-pass-nueva" autocomplete="new-password">
-            <button type="button" class="toggle-pass" data-target="cfg-pass-nueva" title="Mostrar contraseña" onclick="toggleVerPassword('cfg-pass-nueva', this)">👁️</button>
+            <button type="button" class="toggle-pass" data-target="cfg-pass-nueva" title="Mostrar contraseña" onclick="toggleVerPassword('cfg-pass-nueva', this)"><i data-ico="ojo"></i></button>
           </div>
         </div>
         <div class="campo"><label>Confirmar nueva contraseña</label>
           <div class="campo-pass">
             <input type="password" id="cfg-pass-conf" autocomplete="new-password">
-            <button type="button" class="toggle-pass" data-target="cfg-pass-conf" title="Mostrar contraseña" onclick="toggleVerPassword('cfg-pass-conf', this)">👁️</button>
+            <button type="button" class="toggle-pass" data-target="cfg-pass-conf" title="Mostrar contraseña" onclick="toggleVerPassword('cfg-pass-conf', this)"><i data-ico="ojo"></i></button>
           </div>
         </div>
         <button class="btn btn-primario" onclick="cambiarPasswordAdmin()">Guardar cambios</button>
@@ -271,13 +271,13 @@
 <!-- MODALES -->
 <div class="modal-overlay" id="modal-login-admin">
   <div class="modal">
-    <h2>🔐 Acceso administrativo</h2>
+    <h2><i data-ico="candado"></i> Acceso administrativo</h2>
     <div class="campo"><label>Usuario</label><input type="text" id="adm-user" placeholder="admin" autocomplete="off"></div>
     <div class="campo">
       <label>Contraseña</label>
       <div class="campo-pass">
         <input type="password" id="adm-pass" placeholder="••••••••" autocomplete="new-password">
-        <button type="button" class="toggle-pass" data-target="adm-pass" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('adm-pass', this)">👁️</button>
+        <button type="button" class="toggle-pass" data-target="adm-pass" title="Mostrar contraseña" aria-label="Mostrar contraseña" onclick="toggleVerPassword('adm-pass', this)"><i data-ico="ojo"></i></button>
       </div>
     </div>
     <div class="modal-btns">
@@ -289,7 +289,7 @@
 
 <div class="modal-overlay" id="modal-prestamo">
   <div class="modal">
-    <h2>📖 Solicitar préstamo</h2>
+    <h2><i data-ico="libro-abierto"></i> Solicitar préstamo</h2>
     <div id="modal-prestamo-libro-info" style="background:var(--crema-2);border-radius:var(--radio-sm);padding:14px;margin-bottom:16px"></div>
     <p class="seleccion-titulo">¿Cuántos días necesitas el libro?</p>
     <div class="dias-selector">
@@ -308,7 +308,7 @@
 <!-- Modal aviso devolución -->
 <div class="modal-overlay" id="modal-aviso-devolucion">
   <div class="modal" style="text-align:center;max-width:420px">
-    <div style="font-size:56px;margin-bottom:16px">📚</div>
+    <div class="modal-ico-grande"><i data-ico="biblioteca"></i></div>
     <h2 style="margin-bottom:12px">¡Devolución registrada!</h2>
     <p style="font-size:15px;line-height:1.7;color:var(--gris);margin-bottom:8px">
       Por favor, coloca el libro en el <strong style="color:var(--negro)">estante de libros devueltos</strong>
@@ -325,12 +325,12 @@
 
 <div class="modal-overlay" id="modal-agregar-libro">
   <div class="modal" style="max-width:540px">
-    <h2>📚 Agregar libro</h2>
+    <h2><i data-ico="libro-mas"></i> Agregar libro</h2>
     <div class="campo-row">
       <div class="campo"><label>Código (Auto-generado)</label><input type="text" id="nl-codigo" placeholder="LIB-009" readonly style="background:var(--crema-2)"></div>
       <div class="campo">
         <label class="label-con-accion">Género
-          <button type="button" class="btn-mini-gestor" onclick="abrirGestorGeneros()" title="Administrar géneros">⚙️ Gestionar</button>
+          <button type="button" class="btn-mini-gestor" onclick="abrirGestorGeneros()" title="Administrar géneros"><i data-ico="engrane"></i> Gestionar</button>
         </label>
         <select id="nl-genero"></select>
       </div>
@@ -356,12 +356,12 @@
 <!-- MODAL EDITAR LIBRO -->
 <div class="modal-overlay" id="modal-editar-libro">
   <div class="modal" style="max-width:540px">
-    <h2>✏️ Editar libro</h2>
+    <h2><i data-ico="editar"></i> Editar libro</h2>
     <div class="campo-row">
       <div class="campo"><label>Código</label><input type="text" id="el-codigo" placeholder="LIB-009"></div>
       <div class="campo">
         <label class="label-con-accion">Género
-          <button type="button" class="btn-mini-gestor" onclick="abrirGestorGeneros()" title="Administrar géneros">⚙️ Gestionar</button>
+          <button type="button" class="btn-mini-gestor" onclick="abrirGestorGeneros()" title="Administrar géneros"><i data-ico="engrane"></i> Gestionar</button>
         </label>
         <select id="el-genero"></select>
       </div>
@@ -387,7 +387,7 @@
 <!-- MODAL ADVERTENCIA CÓDIGO DUPLICADO -->
 <div class="modal-overlay" id="modal-codigo-duplicado">
   <div class="modal" style="max-width:480px">
-    <h2>⚠️ Código duplicado</h2>
+    <h2><i data-ico="alerta"></i> Código duplicado</h2>
     <p style="color:var(--gris-medio);margin-bottom:20px">El código <strong id="cod-dup-valor"></strong> ya existe en el inventario.</p>
     <div style="background:var(--amarillo-claro);border-left:4px solid var(--amarillo);padding:12px;border-radius:4px;margin-bottom:20px;font-size:14px">
       <strong>Sugerencia:</strong> Usa el código <strong id="cod-sugerido"></strong>
@@ -403,7 +403,7 @@
 <!-- MODAL CONFIRMAR ELIMINAR LIBRO -->
 <div class="modal-overlay" id="modal-confirmar-eliminar-libro">
   <div class="modal" style="max-width:480px">
-    <h2>🗑️ Confirmar eliminación</h2>
+    <h2><i data-ico="basura"></i> Confirmar eliminación</h2>
     <p style="color:var(--gris-medio);margin-bottom:20px">¿Estás seguro de que deseas eliminar el libro?</p>
     <div style="background:var(--rojo-claro);border-left:4px solid var(--rojo);padding:12px;border-radius:4px;margin-bottom:20px;font-size:14px">
       <strong>Libro:</strong> <span id="libro-eliminar-nombre"></span>
@@ -419,7 +419,7 @@
 <!-- MODAL GESTOR DE GÉNEROS -->
 <div class="modal-overlay" id="modal-generos">
   <div class="modal" style="max-width:560px">
-    <h2>🏷️ Administrar géneros</h2>
+    <h2><i data-ico="etiqueta"></i> Administrar géneros</h2>
     <p style="color:var(--gris-medio);font-size:14px;margin-bottom:18px">
       Los cambios se aplican también a los libros ya registrados. Si renombras un género,
       todos los libros con esa etiqueta se actualizan automáticamente.
@@ -445,7 +445,7 @@
 <!-- MODAL AVISO GÉNERO DUPLICADO -->
 <div class="modal-overlay" id="modal-genero-duplicado">
   <div class="modal" style="max-width:440px">
-    <h2>⚠️ Género ya registrado</h2>
+    <h2><i data-ico="alerta"></i> Género ya registrado</h2>
     <div style="background:var(--amarillo-claro);border-left:4px solid var(--amarillo);padding:12px;border-radius:4px;margin:16px 0;font-size:14px">
       El género <strong id="gen-dup-valor"></strong> ya existe en el catálogo.
     </div>
@@ -461,7 +461,7 @@
 <!-- MODAL ELIMINAR GÉNERO -->
 <div class="modal-overlay" id="modal-eliminar-genero">
   <div class="modal" style="max-width:480px">
-    <h2>🗑️ Eliminar género</h2>
+    <h2><i data-ico="basura"></i> Eliminar género</h2>
     <div style="background:var(--rojo-claro);border-left:4px solid var(--rojo);padding:12px;border-radius:4px;margin:16px 0;font-size:14px">
       <strong>Género:</strong> <span id="gen-del-nombre"></span>
     </div>
@@ -480,14 +480,14 @@
 <!-- MODAL VER / REIMPRIMIR COMPROBANTE -->
 <div class="modal-overlay" id="modal-ver-comprobante">
   <div class="modal" style="max-width:520px">
-    <h2>🧾 Comprobante <span id="vista-comp-folio" style="color:var(--rojo)"></span></h2>
+    <h2><i data-ico="recibo"></i> Comprobante <span id="vista-comp-folio" style="color:var(--rojo)"></span></h2>
     <p style="color:var(--gris-medio);font-size:14px;margin-bottom:16px">
       Estos son los mismos datos que se imprimieron cuando se registró el préstamo.
     </p>
     <div class="vista-comprobante" id="vista-comp-contenido"></div>
     <div class="modal-btns">
       <button class="btn btn-secundario" onclick="cerrarModal('modal-ver-comprobante')">Cerrar</button>
-      <button class="btn btn-primario" onclick="imprimirDesdeVista()">🖨️ Imprimir</button>
+      <button class="btn btn-primario" onclick="imprimirDesdeVista()"><i data-ico="impresora"></i> Imprimir</button>
     </div>
   </div>
 </div>
@@ -495,7 +495,7 @@
 <!-- MODAL EDITAR USUARIO -->
 <div class="modal-overlay" id="modal-editar-usuario">
   <div class="modal" style="max-width:540px">
-    <h2>✏️ Editar usuario</h2>
+    <h2><i data-ico="editar"></i> Editar usuario</h2>
     <div class="campo-row">
       <div class="campo"><label>Nombre(s)</label><input type="text" id="eu-nombre" placeholder="Nombre del usuario"></div>
       <div class="campo"><label>Apellidos</label><input type="text" id="eu-apellidos" placeholder="Apellidos"></div>

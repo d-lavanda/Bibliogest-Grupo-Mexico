@@ -330,3 +330,53 @@ body { font-family: 'DM Sans', sans-serif; background: var(--crema); color: var(
   padding: 7px 0; border-bottom: 1px dashed var(--gris-claro); font-size: 14px;
 }
 .vista-comprobante .comp-fila:last-of-type { border-bottom: none; }
+
+/* ═══════════════════════════════════════════════════════════
+   ICONOS SVG
+   Reemplazan a los emojis. Heredan el color del texto y se
+   escalan con el font-size del contenedor.
+   ═══════════════════════════════════════════════════════════ */
+.ico,
+i[data-ico] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: -0.145em;
+  flex-shrink: 0;
+}
+.ico svg,
+i[data-ico] svg {
+  width: 1em;
+  height: 1em;
+  display: block;
+}
+
+/* Trazo un poco más fino en tamaños grandes, para que no se vea pesado */
+.stat-icono .ico svg,
+.vacio-icono .ico svg,
+.modal-ico-grande .ico svg { stroke-width: 1.5; }
+
+/* Contenedores que antes dependían del tamaño del emoji */
+.stat-icono { font-size: 30px; margin-bottom: 12px; line-height: 1; color: inherit; }
+.vacio-icono { font-size: 46px; margin-bottom: 16px; display: block; opacity: 0.5; line-height: 1; }
+.busqueda-icono { font-size: 16px; display: flex; }
+.modal-ico-grande { font-size: 52px; margin-bottom: 16px; color: var(--rojo); line-height: 1; }
+.aviso-ico { font-size: 20px; display: flex; flex-shrink: 0; }
+
+/* Título de modal con icono alineado */
+.modal h2 { display: flex; align-items: center; gap: 9px; }
+.modal h2 .ico { color: var(--rojo); }
+
+/* Botones e insignias: separación entre icono y texto */
+.badge .ico { margin-right: 4px; font-size: 0.95em; }
+.btn .ico { font-size: 1.05em; }
+.btn-ghost .ico { font-size: 16px; }
+.toggle-pass .ico { font-size: 17px; color: var(--gris-medio); }
+.toggle-pass:hover .ico { color: var(--rojo); }
+.btn-mini-gestor .ico { font-size: 12px; }
+
+/* Icono de género en el gestor y en las tarjetas de revisión */
+.genero-emoji { font-size: 17px; display: flex; color: var(--cafe, var(--gris-medio)); }
+.revision-card > div:first-child { font-size: 34px !important; color: var(--rojo); opacity: .85; }
+.revision-meta .ico { font-size: 14px; color: var(--gris-medio); margin-right: 2px; }
+.prestamo-icono { font-size: 30px; color: var(--rojo); opacity: .85; display: flex; align-items: center; }
