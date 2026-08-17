@@ -132,13 +132,33 @@
 
     <div class="tab-panel" id="tab-historial">
       <h2 style="font-family:'Playfair Display',serif;font-size:24px;margin-bottom:4px">Historial</h2>
-      <p style="color:var(--gris-medio);font-size:14px;margin-bottom:24px">Todos tus préstamos registrados</p>
+      <p style="color:var(--gris-medio);font-size:14px;margin-bottom:18px">Todos tus préstamos registrados</p>
+
+      <div class="filtros-barra">
+        <div class="filtro-busqueda">
+          <span class="filtro-busqueda-ico"><i data-ico="buscar"></i></span>
+          <input type="text" id="busqueda-historial" placeholder="Buscar por título o autor..." oninput="reiniciarPaginaHistorial()">
+        </div>
+        <select id="filtro-estado-historial" onchange="reiniciarPaginaHistorial()">
+          <option value="">Todos los estados</option>
+          <option value="activo">Activos</option>
+          <option value="devuelto">Devueltos</option>
+          <option value="vencido">Vencidos</option>
+        </select>
+        <select id="filtro-anio-historial" onchange="reiniciarPaginaHistorial()">
+          <option value="">Todos los años</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" id="btn-limpiar-historial" onclick="limpiarFiltrosHistorial()" style="display:none">Limpiar</button>
+      </div>
+      <p class="filtros-conteo" id="historial-conteo"></p>
+
       <div class="historial-tabla">
         <table>
           <thead><tr><th>Libro</th><th>Autor</th><th>Fecha préstamo</th><th>Fecha límite</th><th>Devolución</th><th>Estado</th></tr></thead>
           <tbody id="historial-body"></tbody>
         </table>
       </div>
+      <div class="mas-resultados" id="historial-mas"></div>
     </div>
   </main>
 </div>
@@ -175,21 +195,35 @@
 
     <!-- PRÉSTAMOS ADMIN -->
     <div class="tab-panel" id="tab-prestamos-admin">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px">
         <h2 style="font-family:'Playfair Display',serif;font-size:26px">Gestión de préstamos</h2>
-        <select id="filtro-estado-prestamo" onchange="renderTablaPrestamoAdmin()" style="padding:8px 12px;border:1.5px solid var(--gris-claro);border-radius:var(--radio-sm);font-family:'DM Sans',sans-serif;font-size:14px">
+      </div>
+
+      <div class="filtros-barra">
+        <div class="filtro-busqueda">
+          <span class="filtro-busqueda-ico"><i data-ico="buscar"></i></span>
+          <input type="text" id="busqueda-prestamos-admin" placeholder="Buscar por usuario, libro o folio..." oninput="reiniciarPaginaPrestamos()">
+        </div>
+        <select id="filtro-estado-prestamo" onchange="reiniciarPaginaPrestamos()">
           <option value="">Todos los estados</option>
           <option value="activo">Activos</option>
           <option value="devuelto">Devueltos</option>
           <option value="vencido">Vencidos</option>
         </select>
+        <select id="filtro-anio-prestamo" onchange="reiniciarPaginaPrestamos()">
+          <option value="">Todos los años</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" id="btn-limpiar-prestamos" onclick="limpiarFiltrosPrestamos()" style="display:none">Limpiar</button>
       </div>
+      <p class="filtros-conteo" id="prestamos-conteo"></p>
+
       <div class="admin-tabla-caja">
         <table class="admin-tabla">
           <thead><tr><th>Usuario</th><th>Libro</th><th>Préstamo</th><th>Límite</th><th>Devolución</th><th>Estado</th><th>Acción</th></tr></thead>
           <tbody id="tabla-prestamos-admin"></tbody>
         </table>
       </div>
+      <div class="mas-resultados" id="prestamos-mas"></div>
     </div>
 
     <!-- LIBROS A REVISIÓN -->

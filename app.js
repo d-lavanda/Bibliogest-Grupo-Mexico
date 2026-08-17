@@ -420,7 +420,7 @@ function cambiarTab(nombre) {
   });
   if (nombre === 'catalogo')  renderCatalogo();
   if (nombre === 'prestamos') renderMisPrestamos();
-  if (nombre === 'historial') renderHistorial();
+  if (nombre === 'historial') reiniciarPaginaHistorial();
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -638,25 +638,115 @@ function devolverLibro(prestamoId) {
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  HISTORIAL
+//  No se recorta ningún registro: los filtros solo cambian lo que se muestra
+//  en pantalla, y el botón "Mostrar más" va revelando el resto de a poco para
+//  que la tabla siga siendo cómoda de leer aunque haya cientos de préstamos.
 // ══════════════════════════════════════════════════════════════════════════════
+const HISTORIAL_POR_PAGINA = 20;
+let historialVisibles = HISTORIAL_POR_PAGINA;
+
+// Clasifica un préstamo para los filtros de estado.
+function estadoDePrestamo(p) {
+  if (p.fecha_devolucion) return 'devuelto';
+  return diasRestantes(p.fecha_limite) < 0 ? 'vencido' : 'activo';
+}
+
+function anioDeFecha(s) {
+  return s ? String(s).slice(0, 4) : '';
+}
+
+// Llena un <select> con los años en los que hubo préstamos.
+function poblarSelectAnios(selectId, prestamos) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  const previo = sel.value;
+  const anios = [...new Set(prestamos.map(p => anioDeFecha(p.fecha_prestamo)).filter(Boolean))]
+    .sort((a, b) => b.localeCompare(a));
+  sel.innerHTML = '<option value="">Todos los años</option>' +
+    anios.map(a => '<option value="' + a + '">' + a + '</option>').join('');
+  if (previo && anios.includes(previo)) sel.value = previo;
+}
+
+function reiniciarPaginaHistorial() {
+  historialVisibles = HISTORIAL_POR_PAGINA;
+  renderHistorial();
+}
+
+function verMasHistorial() {
+  historialVisibles += HISTORIAL_POR_PAGINA;
+  renderHistorial();
+}
+
+function limpiarFiltrosHistorial() {
+  document.getElementById('busqueda-historial').value = '';
+  document.getElementById('filtro-estado-historial').value = '';
+  document.getElementById('filtro-anio-historial').value = '';
+  reiniciarPaginaHistorial();
+}
+
 function renderHistorial() {
-  const mis = DB.prestamos.filter(p => p.usuario_id===usuarioActual.id);
-  const tbody = document.getElementById('historial-body');
-  if (!mis.length) {
-    tbody.innerHTML = '<tr><td colspan="6"><div class="vacio"><span class="vacio-icono">' + ico('portapapeles') + '</span><h3>Sin historial</h3></div></td></tr>';
+  const todos = DB.prestamos.filter(p => p.usuario_id === usuarioActual.id);
+  poblarSelectAnios('filtro-anio-historial', todos);
+
+  const q      = (document.getElementById('busqueda-historial')?.value || '').toLowerCase().trim();
+  const estado = document.getElementById('filtro-estado-historial')?.value || '';
+  const anio   = document.getElementById('filtro-anio-historial')?.value || '';
+  const hayFiltros = !!(q || estado || anio);
+
+  const btnLimpiar = document.getElementById('btn-limpiar-historial');
+  if (btnLimpiar) btnLimpiar.style.display = hayFiltros ? 'inline-flex' : 'none';
+
+  let filtrados = [...todos].reverse();
+  if (estado) filtrados = filtrados.filter(p => estadoDePrestamo(p) === estado);
+  if (anio)   filtrados = filtrados.filter(p => anioDeFecha(p.fecha_prestamo) === anio);
+  if (q) {
+    filtrados = filtrados.filter(p => {
+      const l = DB.libros.find(x => x.id === p.libro_id);
+      return (l?.titulo || '').toLowerCase().includes(q) || (l?.autor || '').toLowerCase().includes(q);
+    });
+  }
+
+  const tbody   = document.getElementById('historial-body');
+  const conteo  = document.getElementById('historial-conteo');
+  const caja    = document.getElementById('historial-mas');
+
+  if (!todos.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="vacio"><span class="vacio-icono">' + ico('portapapeles') + '</span><h3>Sin historial</h3><p>Aquí aparecerán tus préstamos</p></div></td></tr>';
+    if (conteo) conteo.textContent = '';
+    if (caja) caja.innerHTML = '';
     return;
   }
-  tbody.innerHTML = [...mis].reverse().map(p => {
-    const libro = DB.libros.find(l => l.id===p.libro_id);
+  if (!filtrados.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="vacio"><span class="vacio-icono">' + ico('buscar') + '</span><h3>Sin resultados</h3><p>Prueba con otra búsqueda o quita los filtros</p></div></td></tr>';
+    if (conteo) conteo.textContent = 'Ningún préstamo coincide (tienes ' + todos.length + ' en total)';
+    if (caja) caja.innerHTML = '';
+    return;
+  }
+
+  const visibles = filtrados.slice(0, historialVisibles);
+  tbody.innerHTML = visibles.map(p => {
+    const libro = DB.libros.find(l => l.id === p.libro_id);
     return `<tr>
-      <td><strong>${libro?.titulo||'N/A'}</strong></td>
-      <td>${libro?.autor||''}</td>
+      <td><strong>${escapeHtml(libro?.titulo || 'N/A')}</strong></td>
+      <td>${escapeHtml(libro?.autor || '')}</td>
       <td>${formatFecha(p.fecha_prestamo)}</td>
       <td>${formatFecha(p.fecha_limite)}</td>
       <td>${formatFecha(p.fecha_devolucion)}</td>
-      <td>${estadoBadge(p.estado,p.fecha_limite,p.fecha_devolucion)}</td>
+      <td>${estadoBadge(p.estado, p.fecha_limite, p.fecha_devolucion)}</td>
     </tr>`;
   }).join('');
+
+  if (conteo) {
+    conteo.textContent = hayFiltros
+      ? 'Mostrando ' + visibles.length + ' de ' + filtrados.length + ' préstamo(s) filtrado(s) · ' + todos.length + ' en total'
+      : 'Mostrando ' + visibles.length + ' de ' + filtrados.length + ' préstamo(s)';
+  }
+  if (caja) {
+    const faltan = filtrados.length - visibles.length;
+    caja.innerHTML = faltan > 0
+      ? '<button class="btn btn-secundario" onclick="verMasHistorial()">Mostrar ' + Math.min(faltan, HISTORIAL_POR_PAGINA) + ' más (faltan ' + faltan + ')</button>'
+      : '';
+  }
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
@@ -671,7 +761,7 @@ function cambiarTabAdmin(nombre) {
   const idx = ADMIN_TABS.indexOf(nombre);
   if (idx >= 0) document.querySelectorAll('.admin-nav-btn')[idx]?.classList.add('activo');
   if (nombre==='dashboard')      renderDashboard();
-  if (nombre==='prestamos-admin') renderTablaPrestamoAdmin();
+  if (nombre==='prestamos-admin') reiniciarPaginaPrestamos();
   if (nombre==='revision')       renderRevision();
   if (nombre==='inventario')     renderInventario();
   if (nombre==='usuarios-admin') renderUsuariosAdmin();
@@ -753,15 +843,66 @@ function marcarRevisado(revisionId) {
 // ══════════════════════════════════════════════════════════════════════════════
 //  ADMIN — PRÉSTAMOS
 // ══════════════════════════════════════════════════════════════════════════════
+const PRESTAMOS_POR_PAGINA = 25;
+let prestamosVisibles = PRESTAMOS_POR_PAGINA;
+
+function reiniciarPaginaPrestamos() {
+  prestamosVisibles = PRESTAMOS_POR_PAGINA;
+  renderTablaPrestamoAdmin();
+}
+
+function verMasPrestamos() {
+  prestamosVisibles += PRESTAMOS_POR_PAGINA;
+  renderTablaPrestamoAdmin();
+}
+
+function limpiarFiltrosPrestamos() {
+  document.getElementById('busqueda-prestamos-admin').value = '';
+  document.getElementById('filtro-estado-prestamo').value = '';
+  document.getElementById('filtro-anio-prestamo').value = '';
+  reiniciarPaginaPrestamos();
+}
+
 function renderTablaPrestamoAdmin() {
+  poblarSelectAnios('filtro-anio-prestamo', DB.prestamos);
+
+  const q      = (document.getElementById('busqueda-prestamos-admin')?.value || '').toLowerCase().trim();
   const filtro = document.getElementById('filtro-estado-prestamo')?.value || '';
+  const anio   = document.getElementById('filtro-anio-prestamo')?.value || '';
+  const hayFiltros = !!(q || filtro || anio);
+
+  const btnLimpiar = document.getElementById('btn-limpiar-prestamos');
+  if (btnLimpiar) btnLimpiar.style.display = hayFiltros ? 'inline-flex' : 'none';
+
   let prestamos = [...DB.prestamos].reverse();
-  if (filtro==='vencido')  prestamos = prestamos.filter(p => !p.fecha_devolucion && diasRestantes(p.fecha_limite)<0);
-  if (filtro==='activo')   prestamos = prestamos.filter(p => !p.fecha_devolucion && diasRestantes(p.fecha_limite)>=0);
-  if (filtro==='devuelto') prestamos = prestamos.filter(p => !!p.fecha_devolucion);
-  const tbody = document.getElementById('tabla-prestamos-admin');
-  if (!prestamos.length) { tbody.innerHTML = '<tr><td colspan="7"><div class="vacio" style="padding:30px">Sin registros</div></td></tr>'; return; }
-  tbody.innerHTML = prestamos.map(p => {
+  if (filtro) prestamos = prestamos.filter(p => estadoDePrestamo(p) === filtro);
+  if (anio)   prestamos = prestamos.filter(p => anioDeFecha(p.fecha_prestamo) === anio);
+  if (q) {
+    prestamos = prestamos.filter(p => {
+      const u = DB.usuarios.find(x => x.id === p.usuario_id);
+      const l = DB.libros.find(x => x.id === p.libro_id);
+      const folio = String(p.id).padStart(4, '0');
+      return (u ? (u.nombre + ' ' + u.apellidos).toLowerCase() : '').includes(q) ||
+             (u?.curp || '').toLowerCase().includes(q) ||
+             (l?.titulo || '').toLowerCase().includes(q) ||
+             folio.includes(q.replace('#', ''));
+    });
+  }
+
+  const tbody  = document.getElementById('tabla-prestamos-admin');
+  const conteo = document.getElementById('prestamos-conteo');
+  const caja   = document.getElementById('prestamos-mas');
+
+  if (!prestamos.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="vacio" style="padding:30px">' +
+      (hayFiltros ? 'Ningún préstamo coincide con los filtros' : 'Sin registros') + '</div></td></tr>';
+    if (conteo) conteo.textContent = hayFiltros ? DB.prestamos.length + ' préstamo(s) en total' : '';
+    if (caja) caja.innerHTML = '';
+    return;
+  }
+
+  const visibles = prestamos.slice(0, prestamosVisibles);
+  tbody.innerHTML = visibles.map(p => {
     const u = DB.usuarios.find(x => x.id===p.usuario_id);
     const l = DB.libros.find(x => x.id===p.libro_id);
     const puede = !p.fecha_devolucion;
@@ -771,6 +912,18 @@ function renderTablaPrestamoAdmin() {
       (puede ? ' <button class="btn btn-verde btn-sm" onclick="adminDevolverLibro('+p.id+')">Registrar devolución</button>' : '');
     return '<tr><td><span class="folio-tag">' + folio + '</span> ' + (u?escapeHtml(u.nombre+' '+u.apellidos):'N/A') + '</td><td>' + escapeHtml(l?.titulo||'N/A') + '</td><td>' + formatFecha(p.fecha_prestamo) + '</td><td>' + formatFecha(p.fecha_limite) + '</td><td>' + formatFecha(p.fecha_devolucion) + '</td><td>' + estadoBadge(p.estado,p.fecha_limite,p.fecha_devolucion) + '</td><td style="white-space:nowrap">' + acciones + '</td></tr>';
   }).join('');
+
+  if (conteo) {
+    conteo.textContent = hayFiltros
+      ? 'Mostrando ' + visibles.length + ' de ' + prestamos.length + ' filtrado(s) · ' + DB.prestamos.length + ' en total'
+      : 'Mostrando ' + visibles.length + ' de ' + prestamos.length + ' préstamo(s)';
+  }
+  if (caja) {
+    const faltan = prestamos.length - visibles.length;
+    caja.innerHTML = faltan > 0
+      ? '<button class="btn btn-secundario" onclick="verMasPrestamos()">Mostrar ' + Math.min(faltan, PRESTAMOS_POR_PAGINA) + ' más (faltan ' + faltan + ')</button>'
+      : '';
+  }
 }
 
 function adminDevolverLibro(prestamoId) {
