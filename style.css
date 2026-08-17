@@ -416,3 +416,33 @@ i[data-ico] svg {
   .filtro-busqueda { min-width: 100%; }
   .filtros-barra select { flex: 1; min-width: 130px; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PALETA DE ICONOS PARA GÉNEROS
+   ═══════════════════════════════════════════════════════════ */
+.paleta-iconos {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+.icono-opcion {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff; border: 1.5px solid var(--gris-claro);
+  border-radius: var(--radio-sm); cursor: pointer;
+  color: var(--gris-medio); font-size: 17px;
+  transition: all .15s ease; padding: 0;
+}
+.icono-opcion:hover {
+  border-color: var(--rojo); color: var(--rojo);
+  transform: translateY(-1px);
+}
+.icono-opcion.activo {
+  background: var(--rojo); border-color: var(--rojo); color: #fff;
+  box-shadow: 0 2px 6px rgba(192,57,43,.28);
+}
+.icono-opcion .ico svg { stroke-width: 1.9; }
+
+@media (max-width: 560px) {
+  .paleta-iconos { grid-template-columns: repeat(5, 1fr); }
+}

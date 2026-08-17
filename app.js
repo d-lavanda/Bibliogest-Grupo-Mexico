@@ -44,8 +44,28 @@ const ICONOS = {
   destellos:      '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/>',
   carita:         '<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" x2="9.01" y1="9" y2="9"/><line x1="15" x2="15.01" y1="9" y2="9"/>',
   birrete:        '<path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>',
-  columnas:       '<path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/>'
+  columnas:       '<path d="M10 18v-7"/><path d="M11.12 2.198a2 2 0 0 1 1.76.006l7.866 3.847c.476.233.31.949-.22.949H3.474c-.53 0-.695-.716-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/>',
+  estrella:       '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
+  corazon:        '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  globo:          '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>'
 };
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  BIBLIOTECA DE ICONOS PARA GÉNEROS
+//  Diez opciones generales que le quedan bien a casi cualquier categoría.
+// ══════════════════════════════════════════════════════════════════════════════
+const ICONOS_GENERO = [
+  { clave: 'libro',          etiqueta: 'Libro' },
+  { clave: 'libro-abierto',  etiqueta: 'Libro abierto' },
+  { clave: 'pergamino',      etiqueta: 'Pergamino' },
+  { clave: 'destellos',      etiqueta: 'Destellos' },
+  { clave: 'estrella',       etiqueta: 'Estrella' },
+  { clave: 'corazon',        etiqueta: 'Corazón' },
+  { clave: 'globo',          etiqueta: 'Mundo' },
+  { clave: 'birrete',        etiqueta: 'Educativo' },
+  { clave: 'columnas',       etiqueta: 'Historia' },
+  { clave: 'carita',         etiqueta: 'Infantil' }
+];
 
 // Devuelve el SVG de un icono listo para insertar en HTML.
 function ico(nombre, clase) {
@@ -92,12 +112,20 @@ function estructuraVacia() {
     prestamos: [],
     revision: [],
     generos: [...GENEROS_DEFECTO],
+    generoIconos: { ...ICONOS_GENERO_DEFECTO },
     _nextLibroId: SEED.libros.length + 1,
     _nextUsuarioId: SEED.usuarios.length + 1,
     _nextPrestamoId: 1,
     _nextRevisionId: 1
   };
 }
+
+// Icono por defecto de los géneros que vienen de fábrica.
+const ICONOS_GENERO_DEFECTO = {
+  'Novela':'libro-abierto', 'Clásico':'pergamino', 'Infantil':'carita',
+  'Fantasía':'destellos', 'Misterio':'globo', 'Educativo':'birrete',
+  'Historia':'columnas', 'Ciencia ficción':'estrella', 'Otro':'libro'
+};
 
 // Añade campos nuevos a bases de datos creadas con versiones anteriores de la
 // app, sin borrar nada de lo que ya existe en Firestore.
@@ -115,6 +143,12 @@ function migrarEstructura() {
     const usados = DB.libros.map(l => l.genero).filter(Boolean);
     DB.generos = [...new Set([...GENEROS_DEFECTO, ...usados])];
   }
+
+  // Iconos de género: se rellenan con los de fábrica la primera vez.
+  if (!DB.generoIconos || typeof DB.generoIconos !== 'object') DB.generoIconos = {};
+  DB.generos.forEach(g => {
+    if (!DB.generoIconos[g]) DB.generoIconos[g] = ICONOS_GENERO_DEFECTO[g] || 'libro';
+  });
 }
 
 // Arranca la app: primero se autentica de forma anónima (requerido por las
@@ -311,15 +345,12 @@ function generoBg(genero) {
   return p[genero] || p.default;
 }
 
-// Icono asociado a cada género. Los géneros que cree el encargado usan el
-// icono de libro genérico.
+// Icono asociado a cada género. Primero busca el que eligió el encargado; si
+// no hay, usa el de fábrica, y como último recurso el libro genérico.
 function generoIcono(genero) {
-  const m = {
-    'Novela':'libro-abierto', 'Clásico':'pergamino', 'Infantil':'carita',
-    'Fantasía':'destellos', 'Misterio':'buscar', 'Educativo':'birrete',
-    'Historia':'columnas', 'Ciencia ficción':'destellos'
-  };
-  return m[genero] || 'libro';
+  return (DB?.generoIconos && DB.generoIconos[genero])
+      || ICONOS_GENERO_DEFECTO[genero]
+      || 'libro';
 }
 
 function generoEmoji(genero) {
@@ -1134,13 +1165,32 @@ function confirmarEliminarLibro() {
 // ══════════════════════════════════════════════════════════════════════════════
 let generoEditando = null;   // nombre del género que se está renombrando
 let generoEliminando = null; // nombre del género pendiente de eliminar
+let iconoElegido = 'libro';  // icono seleccionado en el formulario
+
+// Dibuja la paleta de iconos y marca el que está elegido.
+function renderPaletaIconos() {
+  const cont = document.getElementById('paleta-iconos');
+  if (!cont) return;
+  cont.innerHTML = ICONOS_GENERO.map(op =>
+    '<button type="button" class="icono-opcion' + (op.clave === iconoElegido ? ' activo' : '') + '" ' +
+    'title="' + escapeHtml(op.etiqueta) + '" aria-label="' + escapeHtml(op.etiqueta) + '" ' +
+    'onclick="elegirIcono(\'' + op.clave + '\')">' + ico(op.clave) + '</button>'
+  ).join('');
+}
+
+function elegirIcono(clave) {
+  iconoElegido = clave;
+  renderPaletaIconos();
+}
 
 function abrirGestorGeneros() {
   generoEditando = null;
+  iconoElegido = 'libro';
   document.getElementById('gen-nuevo').value = '';
   document.getElementById('gen-form-titulo').textContent = 'Agregar género';
   document.getElementById('gen-btn-guardar').textContent = 'Agregar';
   document.getElementById('gen-btn-cancelar-edicion').style.display = 'none';
+  renderPaletaIconos();
   renderListaGeneros();
   abrirModal('modal-generos');
 }
@@ -1161,12 +1211,12 @@ function renderListaGeneros() {
     const n = librosPorGenero(g);
     return '<div class="genero-fila">' +
       '<div class="genero-nombre">' +
-        '<span class="genero-emoji">' + generoEmoji(g) + '</span>' +
+        '<span class="genero-emoji">' + ico(generoIcono(g)) + '</span>' +
         '<span>' + escapeHtml(g) + '</span>' +
         '<span class="genero-conteo">' + n + ' libro' + (n===1?'':'s') + '</span>' +
       '</div>' +
       '<div class="genero-acciones">' +
-        '<button class="btn btn-ghost btn-sm" onclick="editarGenero(' + JSON.stringify(g).replace(/"/g,'&quot;') + ')" title="Renombrar">' + ico('lapiz') + '</button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="editarGenero(' + JSON.stringify(g).replace(/"/g,'&quot;') + ')" title="Renombrar o cambiar icono">' + ico('lapiz') + '</button>' +
         '<button class="btn btn-ghost btn-sm" onclick="abrirEliminarGenero(' + JSON.stringify(g).replace(/"/g,'&quot;') + ')" title="Eliminar">' + ico('basura') + '</button>' +
       '</div>' +
     '</div>';
@@ -1175,19 +1225,38 @@ function renderListaGeneros() {
 
 function editarGenero(nombre) {
   generoEditando = nombre;
+  iconoElegido = generoIcono(nombre);
   document.getElementById('gen-nuevo').value = nombre;
-  document.getElementById('gen-form-titulo').textContent = 'Renombrar "' + nombre + '"';
-  document.getElementById('gen-btn-guardar').textContent = 'Guardar cambio';
+  document.getElementById('gen-form-titulo').textContent = 'Editando "' + nombre + '"';
+  document.getElementById('gen-btn-guardar').textContent = 'Guardar cambios';
   document.getElementById('gen-btn-cancelar-edicion').style.display = 'inline-flex';
+  renderPaletaIconos();
   document.getElementById('gen-nuevo').focus();
 }
 
 function cancelarEdicionGenero() {
   generoEditando = null;
+  iconoElegido = 'libro';
   document.getElementById('gen-nuevo').value = '';
   document.getElementById('gen-form-titulo').textContent = 'Agregar género';
   document.getElementById('gen-btn-guardar').textContent = 'Agregar';
   document.getElementById('gen-btn-cancelar-edicion').style.display = 'none';
+  renderPaletaIconos();
+}
+
+// Actualiza las listas desplegables de género que estén abiertas detrás del
+// gestor, SIN perder lo que el encargado ya haya escogido ni lo que lleve
+// escrito en el resto del formulario del libro.
+function refrescarSelectsDeGenero(nombrePreferido) {
+  ['nl-genero', 'el-genero'].forEach(id => {
+    const sel = document.getElementById(id);
+    if (!sel) return;
+    const actual = sel.value;
+    const generos = listaGeneros();
+    // Si el que estaba elegido fue renombrado o borrado, se cae al preferido.
+    const destino = generos.includes(actual) ? actual : (nombrePreferido || generos[0]);
+    poblarSelectGeneros(id, destino);
+  });
 }
 
 function guardarGenero() {
@@ -1206,6 +1275,8 @@ function guardarGenero() {
     return;
   }
 
+  if (!DB.generoIconos) DB.generoIconos = {};
+
   if (generoEditando) {
     // RENOMBRAR: se aplica en cascada a todos los libros ya registrados.
     const anterior = generoEditando;
@@ -1214,19 +1285,26 @@ function guardarGenero() {
     DB.libros.forEach(l => {
       if (l.genero === anterior) { l.genero = nombre; afectados++; }
     });
+    if (anterior !== nombre) delete DB.generoIconos[anterior];
+    DB.generoIconos[nombre] = iconoElegido;
     if (filtroGeneroActual === anterior) filtroGeneroActual = nombre;
     guardarDB();
     cancelarEdicionGenero();
     renderListaGeneros();
+    refrescarSelectsDeGenero(nombre);
     renderInventario();
-    toast('Género renombrado a "' + nombre + '"' + (afectados ? ' — ' + afectados + ' libro(s) actualizado(s)' : ''), 'exito');
+    toast('Género actualizado a "' + nombre + '"' + (afectados ? ' — ' + afectados + ' libro(s) actualizado(s)' : ''), 'exito');
   } else {
-    // AGREGAR
+    // AGREGAR: queda disponible de inmediato en los selectores de libro.
     DB.generos = [...generos, nombre];
+    DB.generoIconos[nombre] = iconoElegido;
     guardarDB();
     document.getElementById('gen-nuevo').value = '';
+    iconoElegido = 'libro';
+    renderPaletaIconos();
     renderListaGeneros();
-    toast('Género "' + nombre + '" agregado', 'exito');
+    refrescarSelectsDeGenero(nombre);
+    toast('Género "' + nombre + '" agregado y listo para usarse', 'exito');
   }
 }
 
@@ -1265,11 +1343,13 @@ function confirmarEliminarGenero() {
     DB.libros.forEach(l => { if (l.genero === nombre) l.genero = destino; });
   }
   DB.generos = listaGeneros().filter(g => g !== nombre);
+  if (DB.generoIconos) delete DB.generoIconos[nombre];
   if (filtroGeneroActual === nombre) filtroGeneroActual = 'todos';
   guardarDB();
   generoEliminando = null;
   cerrarModal('modal-eliminar-genero');
   renderListaGeneros();
+  refrescarSelectsDeGenero();
   renderInventario();
   toast('Género "' + nombre + '" eliminado' + (n ? ' — ' + n + ' libro(s) reasignado(s)' : ''), 'info');
 }
