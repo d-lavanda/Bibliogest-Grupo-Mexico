@@ -242,3 +242,91 @@ body { font-family: 'DM Sans', sans-serif; background: var(--crema); color: var(
   .app-header-nav { display: none; }
 }
 .seleccion-titulo { font-size: 14px; font-weight: 500; color: var(--gris-medio); margin-bottom: 12px; }
+
+/* ═══════════════════════════════════════════════════════════
+   AGREGADOS v2 — contraseñas, géneros, existencias, comprobante
+   ═══════════════════════════════════════════════════════════ */
+
+/* --- Campo de contraseña con botón ver/ocultar --- */
+.campo-pass { position: relative; display: flex; align-items: center; }
+.campo-pass input { width: 100%; padding-right: 46px; }
+.toggle-pass {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  font-size: 17px; line-height: 1; padding: 6px 8px; border-radius: 6px;
+  transition: background .15s ease;
+}
+.toggle-pass:hover { background: var(--crema-2); }
+.toggle-pass:focus-visible { outline: 2px solid var(--rojo); outline-offset: 1px; }
+
+/* --- Etiqueta con botón de acción al lado --- */
+.label-con-accion {
+  display: flex !important; align-items: center; justify-content: space-between; gap: 8px;
+}
+.btn-mini-gestor {
+  background: var(--crema-2); border: 1px solid var(--gris-claro);
+  border-radius: 6px; cursor: pointer;
+  font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500;
+  color: var(--gris-medio); padding: 3px 8px; transition: all .15s ease;
+}
+.btn-mini-gestor:hover { background: var(--rojo); color: #fff; border-color: var(--rojo); }
+
+.campo-ayuda { font-size: 12px; color: var(--gris-medio); margin-top: 6px; line-height: 1.45; }
+
+/* --- Gestor de géneros --- */
+.gen-form {
+  background: var(--crema-2); border-radius: var(--radio-sm);
+  padding: 14px; margin-bottom: 18px;
+}
+.gen-form-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.gen-form-row input { flex: 1; min-width: 160px; }
+.lista-generos { max-height: 320px; overflow-y: auto; border: 1.5px solid var(--gris-claro); border-radius: var(--radio-sm); }
+.genero-fila {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 14px; border-bottom: 1px solid var(--gris-claro);
+}
+.genero-fila:last-child { border-bottom: none; }
+.genero-fila:hover { background: var(--crema-2); }
+.genero-nombre { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 500; }
+.genero-emoji { font-size: 17px; }
+.genero-conteo {
+  font-size: 11px; color: var(--gris-medio); font-weight: 400;
+  background: var(--crema-2); padding: 2px 7px; border-radius: 20px;
+}
+.genero-fila:hover .genero-conteo { background: #fff; }
+.genero-acciones { display: flex; gap: 2px; flex-shrink: 0; }
+
+/* --- Existencias en inventario --- */
+.celda-existencias { white-space: nowrap; }
+.btn-exist {
+  width: 22px; height: 22px; border-radius: 5px; cursor: pointer;
+  border: 1px solid var(--gris-claro); background: #fff;
+  font-size: 14px; line-height: 1; color: var(--gris-medio);
+  transition: all .15s ease; vertical-align: middle;
+}
+.btn-exist:hover { background: var(--rojo); color: #fff; border-color: var(--rojo); }
+.exist-num { display: inline-block; min-width: 26px; text-align: center; font-size: 14px; vertical-align: middle; }
+
+/* Contador de ejemplares sobre la portada del catálogo */
+.libro-existencias {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  background: rgba(255,255,255,.92); color: var(--negro);
+  font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+
+/* --- Folio y vista previa de comprobante --- */
+.folio-tag {
+  display: inline-block; font-size: 11px; font-weight: 600; color: var(--rojo);
+  background: var(--rojo-claro); padding: 1px 6px; border-radius: 4px; margin-right: 4px;
+}
+.vista-comprobante {
+  background: var(--crema-2); border: 1.5px solid var(--gris-claro);
+  border-radius: var(--radio-sm); padding: 18px; margin-bottom: 20px;
+  max-height: 340px; overflow-y: auto;
+}
+.vista-comprobante .comp-fila {
+  display: flex; justify-content: space-between; gap: 16px;
+  padding: 7px 0; border-bottom: 1px dashed var(--gris-claro); font-size: 14px;
+}
+.vista-comprobante .comp-fila:last-of-type { border-bottom: none; }
