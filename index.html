@@ -248,10 +248,24 @@
           <button class="btn btn-primario" onclick="abrirModalAgregarLibro()">+ Agregar libro</button>
         </div>
       </div>
-      <div class="admin-tabla-caja">
-        <div class="admin-tabla-header">
-          <div class="busqueda-admin"><input type="text" id="busqueda-inv" placeholder="Buscar..." oninput="renderInventario()"></div>
+      <div class="filtros-barra">
+        <div class="filtro-busqueda">
+          <span class="filtro-busqueda-ico"><i data-ico="buscar"></i></span>
+          <input type="text" id="busqueda-inv" placeholder="Buscar por título, autor o código..." oninput="renderInventario()">
         </div>
+        <select id="orden-inventario" onchange="renderInventario()">
+          <option value="titulo-asc">Título (A → Z)</option>
+          <option value="titulo-desc">Título (Z → A)</option>
+          <option value="autor-asc">Autor (A → Z)</option>
+          <option value="anio-desc">Año (más nuevo primero)</option>
+          <option value="anio-asc">Año (más antiguo primero)</option>
+          <option value="codigo-asc">Código (ascendente)</option>
+          <option value="codigo-desc">Código (descendente)</option>
+        </select>
+      </div>
+      <p class="filtros-conteo" id="inventario-conteo"></p>
+
+      <div class="admin-tabla-caja">
         <table class="admin-tabla">
           <thead><tr><th>Código</th><th>Título</th><th>Autor</th><th>Género</th><th>Año</th><th>Ejemplares</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody id="tabla-inventario"></tbody>
@@ -261,11 +275,25 @@
 
     <!-- USUARIOS -->
     <div class="tab-panel" id="tab-usuarios-admin">
-      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:24px">Usuarios registrados</h2>
-      <div class="admin-tabla-caja">
-        <div class="admin-tabla-header">
-          <div class="busqueda-admin"><input type="text" id="busqueda-usr" placeholder="Buscar..." oninput="renderUsuariosAdmin()"></div>
+      <h2 style="font-family:'Playfair Display',serif;font-size:26px;margin-bottom:18px">Usuarios registrados</h2>
+
+      <div class="filtros-barra">
+        <div class="filtro-busqueda">
+          <span class="filtro-busqueda-ico"><i data-ico="buscar"></i></span>
+          <input type="text" id="busqueda-usr" placeholder="Buscar por nombre o CURP..." oninput="renderUsuariosAdmin()">
         </div>
+        <select id="orden-usuarios" onchange="renderUsuariosAdmin()">
+          <option value="nombre-asc">Nombre (A → Z)</option>
+          <option value="nombre-desc">Nombre (Z → A)</option>
+          <option value="registro-desc">Registro (más reciente)</option>
+          <option value="registro-asc">Registro (más antiguo)</option>
+          <option value="estado-activo">Estado (activos primero)</option>
+          <option value="estado-inactivo">Estado (inactivos primero)</option>
+        </select>
+      </div>
+      <p class="filtros-conteo" id="usuarios-conteo"></p>
+
+      <div class="admin-tabla-caja">
         <table class="admin-tabla">
           <thead><tr><th>Nombre</th><th>CURP</th><th>Teléfono</th><th>Registro</th><th>Tipo</th><th>Estado</th><th>Acciones</th></tr></thead>
           <tbody id="tabla-usuarios-admin"></tbody>

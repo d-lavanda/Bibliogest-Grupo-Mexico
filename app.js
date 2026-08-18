@@ -982,11 +982,48 @@ function generarCodigoLibro() {
   return 'LIB-' + String(numMax + 1).padStart(3, '0');
 }
 
+// Comparador de texto en español: ordena bien acentos y la ñ, e ignora
+// mayúsculas ("Álvaro" queda junto a "Alvaro", no al final de la lista).
+const comparadorEs = new Intl.Collator('es', { sensitivity: 'base', numeric: true });
+function cmpTexto(a, b) { return comparadorEs.compare(a || '', b || ''); }
+
+// Ordena una copia del arreglo: la base de datos NUNCA se reordena ni se
+// reescribe, esto solo cambia cómo se ve la tabla en pantalla.
+function ordenarLibros(libros, criterio) {
+  const copia = [...libros];
+  switch (criterio) {
+    case 'titulo-desc': return copia.sort((a, b) => cmpTexto(b.titulo, a.titulo));
+    case 'autor-asc':   return copia.sort((a, b) => cmpTexto(a.autor, b.autor) || cmpTexto(a.titulo, b.titulo));
+    case 'anio-desc':   return copia.sort((a, b) => (parseInt(b.anio,10)||0) - (parseInt(a.anio,10)||0) || cmpTexto(a.titulo, b.titulo));
+    case 'anio-asc':    return copia.sort((a, b) => (parseInt(a.anio,10)||9999) - (parseInt(b.anio,10)||9999) || cmpTexto(a.titulo, b.titulo));
+    case 'codigo-asc':  return copia.sort((a, b) => cmpTexto(a.codigo, b.codigo));
+    case 'codigo-desc': return copia.sort((a, b) => cmpTexto(b.codigo, a.codigo));
+    case 'titulo-asc':
+    default:            return copia.sort((a, b) => cmpTexto(a.titulo, b.titulo));
+  }
+}
+
 function renderInventario() {
   const q = (document.getElementById('busqueda-inv')?.value||'').toLowerCase();
+  const orden = document.getElementById('orden-inventario')?.value || 'titulo-asc';
   let libros = DB.libros;
   if (q) libros = libros.filter(l => l.titulo.toLowerCase().includes(q)||l.autor.toLowerCase().includes(q)||l.codigo.toLowerCase().includes(q));
+  libros = ordenarLibros(libros, orden);
+
+  const conteo = document.getElementById('inventario-conteo');
+  if (conteo) {
+    const ejemplares = libros.reduce((s, l) => s + copiasTotales(l), 0);
+    conteo.textContent = q
+      ? libros.length + ' título(s) encontrado(s) de ' + DB.libros.length
+      : libros.length + ' título(s) · ' + ejemplares + ' ejemplar(es) en total';
+  }
+
   const tbody = document.getElementById('tabla-inventario');
+  if (!libros.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="vacio" style="padding:30px">' +
+      (q ? 'Ningún libro coincide con la búsqueda' : 'Sin libros registrados') + '</div></td></tr>';
+    return;
+  }
   tbody.innerHTML = libros.map(l => {
     const total  = copiasTotales(l);
     const disp   = copiasDisponibles(l);
@@ -1357,15 +1394,46 @@ function confirmarEliminarGenero() {
 // ══════════════════════════════════════════════════════════════════════════════
 //  ADMIN — USUARIOS
 // ══════════════════════════════════════════════════════════════════════════════
+// Igual que con los libros: se ordena una copia, la base no se toca.
+function ordenarUsuarios(usuarios, criterio) {
+  const copia = [...usuarios];
+  const nombreDe = u => (u.nombre || '') + ' ' + (u.apellidos || '');
+  switch (criterio) {
+    case 'nombre-desc':     return copia.sort((a, b) => cmpTexto(nombreDe(b), nombreDe(a)));
+    case 'registro-desc':   return copia.sort((a, b) => String(b.fecha_reg||'').localeCompare(String(a.fecha_reg||'')));
+    case 'registro-asc':    return copia.sort((a, b) => String(a.fecha_reg||'').localeCompare(String(b.fecha_reg||'')));
+    case 'estado-activo':   return copia.sort((a, b) => (b.activo?1:0) - (a.activo?1:0) || cmpTexto(nombreDe(a), nombreDe(b)));
+    case 'estado-inactivo': return copia.sort((a, b) => (a.activo?1:0) - (b.activo?1:0) || cmpTexto(nombreDe(a), nombreDe(b)));
+    case 'nombre-asc':
+    default:                return copia.sort((a, b) => cmpTexto(nombreDe(a), nombreDe(b)));
+  }
+}
+
 function renderUsuariosAdmin() {
   const q = (document.getElementById('busqueda-usr')?.value||'').toLowerCase();
+  const orden = document.getElementById('orden-usuarios')?.value || 'nombre-asc';
   let usuarios = DB.usuarios;
   if (q) usuarios = usuarios.filter(u => u.nombre.toLowerCase().includes(q)||u.apellidos.toLowerCase().includes(q)||u.curp.toLowerCase().includes(q));
+  usuarios = ordenarUsuarios(usuarios, orden);
+
+  const conteo = document.getElementById('usuarios-conteo');
+  if (conteo) {
+    const activos = usuarios.filter(u => u.activo).length;
+    conteo.textContent = q
+      ? usuarios.length + ' usuario(s) encontrado(s) de ' + DB.usuarios.length
+      : usuarios.length + ' usuario(s) · ' + activos + ' activo(s)';
+  }
+
   const tbody = document.getElementById('tabla-usuarios-admin');
+  if (!usuarios.length) {
+    tbody.innerHTML = '<tr><td colspan="7"><div class="vacio" style="padding:30px">' +
+      (q ? 'Ningún usuario coincide con la búsqueda' : 'Sin usuarios registrados') + '</div></td></tr>';
+    return;
+  }
   tbody.innerHTML = usuarios.map(u =>
-    '<tr><td><strong>' + u.nombre + ' ' + u.apellidos + '</strong></td>' +
-    '<td><code style="background:var(--crema-2);padding:2px 6px;border-radius:4px;font-size:12px">' + u.curp + '</code></td>' +
-    '<td>' + (u.telefono||'—') + '</td>' +
+    '<tr><td><strong>' + escapeHtml(u.nombre + ' ' + u.apellidos) + '</strong></td>' +
+    '<td><code style="background:var(--crema-2);padding:2px 6px;border-radius:4px;font-size:12px">' + escapeHtml(u.curp) + '</code></td>' +
+    '<td>' + escapeHtml(u.telefono||'—') + '</td>' +
     '<td>' + formatFecha(u.fecha_reg) + '</td>' +
     '<td><span class="badge ' + (u.es_menor?'badge-amarillo':'badge-cafe') + '">' + (u.es_menor?'Menor':'Mayor') + '</span></td>' +
     '<td><span class="badge ' + (u.activo?'badge-verde':'badge-rojo') + '">' + (u.activo?'Activo':'Inactivo') + '</span></td>' +
